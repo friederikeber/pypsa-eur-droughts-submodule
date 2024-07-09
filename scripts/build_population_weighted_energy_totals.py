@@ -33,6 +33,11 @@ if __name__ == "__main__":
     pop_layout = pd.read_csv(snakemake.input.clustered_pop_layout, index_col=0)
 
     totals = pd.read_csv(snakemake.input.energy_totals, index_col=[0, 1])
+
+    # no data for switzerland before 2010, use earliest year available for years before 2010
+    if data_year<2010:
+        totals.loc[('CH', data_year), :] = totals.loc[('CH', 2010), :]
+
     totals = totals.xs(data_year, level="year")
 
     nodal_totals = totals.loc[pop_layout.ct].fillna(0.0)
